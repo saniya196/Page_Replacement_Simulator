@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page-Replacement Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">PR</div>
+    <div>
+      <h1>Page-Replacement</h1>
+      <p>Visual Page Replacement Simulator</p>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab active" data-tab="sim">Simulation</button>
+    <button class="tab" data-tab="compare">Compare All</button>
+    <button class="tab" data-tab="algos">Algorithms</button>
+    <button class="tab" data-tab="code">Code in C</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- TAB 1: SIMULATION -->
+  <section id="sim" class="panel">
+    <div class="card controls">
+      <div>
+        <label class="label" for="algoSelect">Select page replacement algorithm</label>
+        <select id="algoSelect">
+          <option value="FIFO">FIFO — First-In, First-Out</option>
+          <option value="LRU">LRU — Least Recently Used</option>
+          <option value="OPT">OPT — Optimal</option>
+        </select>
+      </div>
+      <div class="btn-row">
+        <select id="presetSelect" class="btn-select">
+          <option value="">Load Presets</option>
+          <option value="classic">Classic (7 0 1 2 ...)</option>
+          <option value="belady">Belady's anomaly</option>
+          <option value="locality">High locality</option>
+        </select>
+        <button id="randomBtn" class="btn">Randomize</button>
+        <button id="simBtn" class="btn primary">Simulate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Input</h2>
+      <p class="sub">Enter the reference string (space or comma separated) and the number of frames.</p>
+      <div class="input-grid">
+        <div>
+          <label class="label" for="refInput">Reference string</label>
+          <input id="refInput" type="text" value="7 0 1 2 0 3 0 4 2 3 0 3 2">
+        </div>
+        <div>
+          <label class="label" for="frameInput">Frames</label>
+          <input id="frameInput" type="number" min="1" max="10" value="3">
+        </div>
+      </div>
+      <p id="error" class="error" hidden></p>
+    </div>
+
+    <div id="results" hidden>
+      <div class="stats">
+        <div class="stat"><span>Total references</span><b id="sTotal">0</b></div>
+        <div class="stat fault"><span>Page faults</span><b id="sFaults">0</b></div>
+        <div class="stat hit"><span>Page hits</span><b id="sHits">0</b></div>
+        <div class="stat"><span>Hit ratio</span><b id="sRatio">0%</b></div>
+      </div>
+
+      <div class="card">
+        <h2>Step-by-step table</h2>
+        <p class="sub"><span class="chip hit">Hit</span> <span class="chip fault">Fault</span> The page that was just loaded is outlined.</p>
+        <div class="scroll"><table id="stepTable" class="steps"></table></div>
+      </div>
+    </div>
+
+    <div class="card formula">
+      <h2>Formula reference</h2>
+      <ul>
+        <li>Hit ratio = Hits / Total references</li>
+        <li>Miss (fault) ratio = Faults / Total references</li>
+        <li>Hits = Total references − Faults</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- TAB 2: COMPARE ALL -->
+  <section id="compare" class="panel" hidden>
+    <div class="card">
+      <h2>Compare all algorithms</h2>
+      <p class="sub">Runs FIFO, LRU and OPT on the input from the Simulation tab.</p>
+      <button id="compareBtn" class="btn primary">Run comparison</button>
+      <p id="compareInfo" class="sub"></p>
+      <div id="compareBars" class="bars"></div>
+      <div class="scroll"><table id="compareTable" class="plain"></table></div>
+    </div>
+
+    <div class="card">
+      <h2>Faults vs. number of frames</h2>
+      <p class="sub">Same reference string, frames from 1 to 7. If FIFO faults go up when frames go up, that is Belady's anomaly (try the "Belady's anomaly" preset).</p>
+      <div class="scroll"><table id="sweepTable" class="plain"></table></div>
+    </div>
+  </section>
+
+  <!-- TAB 3: ALGORITHMS -->
+  <section id="algos" class="panel" hidden>
+    <div id="algoCards" class="cards"></div>
+    <div class="card formula">
+      <h2>Formula reference</h2>
+      <ul>
+        <li>Hit ratio = Hits / Total references</li>
+        <li>Miss (fault) ratio = Faults / Total references</li>
+        <li>OPT ≤ LRU ≤ FIFO in faults for most strings (FIFO can beat LRU on some).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- TAB 4: CODE IN C -->
+  <section id="code" class="panel" hidden>
+    <div class="card">
+      <div class="code-head">
+        <div>
+          <h2>Code in C</h2>
+          <p class="sub">Compile: <code>gcc pr.c -o pr &amp;&amp; ./pr</code> — expected: FIFO 10, LRU 9, OPT 7.</p>
+        </div>
+        <button id="copyBtn" class="btn">Copy code</button>
+      </div>
+      <pre><code id="cCode"></code></pre>
+    </div>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
